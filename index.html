@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookHaven - Online Bookstore</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .nav-buttons {
+            background: #2c3e50;
+            padding: 15px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-buttons button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .nav-buttons button:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .nav-buttons button.active {
+            background: #e74c3c;
+        }
+
+        .content {
+            padding: 40px;
+            min-height: 500px;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* HOME PAGE STYLES */
+        .home-page {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            grid-template-rows: auto 1fr;
+            gap: 20px;
+            height: 100%;
+        }
+
+        .frame {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #dee2e6;
+        }
+
+        .frame h2 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .header-frame {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .header-frame h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header-frame p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .menu-frame ul {
+            list-style: none;
+        }
+
+        .menu-frame li {
+            padding: 12px;
+            margin: 8px 0;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 4px solid #3498db;
+        }
+
+        .menu-frame li:hover {
+            background: #3498db;
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .content-frame {
+            background: white;
+        }
+
+        .content-frame img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .book-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .book-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .book-card h4 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+
+        .book-card p {
+            color: #7f8c8d;
+            font-size: 0.8em;
+        }
+
+        /* FORM STYLES */
+        .form-container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .form-container h2 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 2em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        /* CATALOGUE STYLES */
+        .catalogue-page h2 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 2em;
+        }
+
+        .catalogue-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .catalogue-table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .catalogue-table th,
+        .catalogue-table td {
+            padding: 15px;
+            text-align: left;
+        }
+
+        .catalogue-table th {
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9em;
+            letter-spacing: 1px;
+        }
+
+        .catalogue-table tbody tr {
+            border-bottom: 1px solid #dee2e6;
+            transition: background 0.3s;
+        }
+
+        .catalogue-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .catalogue-table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        .price {
+            color: #27ae60;
+            font-weight: 600;
+        }
+
+        .stock {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .in-stock {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .low-stock {
+            background: #fff3cd;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav-buttons">
+            <button onclick="showPage('home')" class="active" id="homeBtn">Home</button>
+            <button onclick="showPage('login')" id="loginBtn">Login</button>
+            <button onclick="showPage('catalogue')" id="catalogueBtn">Catalogue</button>
+            <button onclick="showPage('register')" id="registerBtn">Register</button>
+        </div>
+
+        <div class="content">
+            <!-- HOME PAGE WITH THREE FRAMES -->
+            <div id="home" class="page active">
+                <div class="home-page">
+                    <!-- Frame 1: Header -->
+                    <div class="frame header-frame">
+                        <h1>📚 BookHaven</h1>
+                        <p>Your Gateway to Endless Stories</p>
+                    </div>
+
+                    <!-- Frame 2: Menu -->
+                    <div class="frame menu-frame">
+                        <h2>Quick Links</h2>
+                        <ul>
+                            <li onclick="showPage('catalogue')">📖 Browse Catalogue</li>
+                            <li onclick="showPage('login')">🔐 Member Login</li>
+                            <li onclick="showPage('register')">✍️ New Registration</li>
+                            <li>🎯 Featured Books</li>
+                            <li>⭐ Best Sellers</li>
+                            <li>💝 Special Offers</li>
+                            <li>📞 Contact Us</li>
+                        </ul>
+                    </div>
+
+                    <!-- Frame 3: Main Content -->
+                    <div class="frame content-frame">
+                        <h2>Welcome to BookHaven!</h2>
+                        <img src="https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=800&h=400&fit=crop&quot; alt="Books">
+                        <p style="line-height: 1.6; color: #555;">
+                            Discover your next great read from our extensive collection of books spanning all genres.
+                            Whether you're looking for fiction, non-fiction, academic texts, or children's books,
+                            we have something for every reader.
+                        </p>
+                        <div class="book-grid">
+                            <div class="book-card">
+                                <h4>Fiction</h4>
+                                <p>250+ Titles</p>
+                            </div>
+                            <div class="book-card">
+                                <h4>Non-Fiction</h4>
+                                <p>180+ Titles</p>
+                            </div>
+                            <div class="book-card">
+                                <h4>Science</h4>
+                                <p>120+ Titles</p>
+                            </div>
+                            <div class="book-card">
+                                <h4>Children's</h4>
+                                <p>95+ Titles</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LOGIN PAGE -->
+            <div id="login" class="page">
+                <div class="form-container">
+                    <h2>🔐 Member Login</h2>
+                    <form onsubmit="return handleLogin(event)">
+                        <div class="form-group">
+                            <label for="loginEmail">Email Address</label>
+                            <input type="email" id="loginEmail" required placeholder="Enter your email">
+                        </div>
+                        <div class="form-group">
+                            <label for="loginPassword">Password</label>
+                            <input type="password" id="loginPassword" required placeholder="Enter your password">
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox"> Remember me
+                            </label>
+                        </div>
+                        <button type="submit" class="submit-btn">Login</button>
+                        <p style="text-align: center; margin-top: 20px; color: #7f8c8d;">
+                            Don't have an account? <a href="#" onclick="showPage('register')" style="color: #3498db;">Register here</a>
+                        </p>
+                    </form>
+                </div>
+            </div>
+
+            <!-- CATALOGUE PAGE -->
+            <div id="catalogue" class="page">
+                <div class="catalogue-page">
+                    <h2>📚 Book Catalogue</h2>
+                    <table class="catalogue-table">
+                        <thead>
+                            <tr>
+                                <th>Book ID</th>
+                                <th>Title</th>
+                                <th>Author</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>ISBN</th>
+                                <th>Stock</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>BK001</td>
+                                <td>The Great Gatsby</td>
+                                <td>F. Scott Fitzgerald</td>
+                                <td>Fiction</td>
+                                <td class="price">$12.99</td>
+                                <td>978-0-7432-7356-5</td>
+                                <td><span class="stock in-stock">In Stock</span></td>
+                            </tr>
+                            <tr>
+                                <td>BK002</td>
+                                <td>To Kill a Mockingbird</td>
+                                <td>Harper Lee</td>
+                                <td>Fiction</td>
+                                <td class="price">$14.99</td>
+                                <td>978-0-06-112008-4</td>
+                                <td><span class="stock in-stock">In Stock</span></td>
+                            </tr>
+                            <tr>
+                                <td>BK003</td>
+                                <td>1984</td>
+                                <td>George Orwell</td>
+                                <td>Fiction</td>
+                                <td class="price">$13.99</td>
+                                <td>978-0-452-28423-4</td>
+                                <td><span class="stock in-stock">In Stock</span></td>
+                            </tr>
+                            <tr>
+                                <td>BK004</td>
+                                <td>Sapiens</td>
+                                <td>Yuval Noah Harari</td>
+                                <td>Non-Fiction</td>
+                                <td class="price">$18.99</td>
+                                <td>978-0-06-231609-7</td>
+                                <td><span class="stock low-stock">Low Stock</span></td>
+                            </tr>
+                            <tr>
+                                <td>BK005</td>
+                                <td>Educated</td>
+                                <td>Tara Westover</td>
+                                <td>Biography</td>
+                                <td class="price">$16.99</td>
+                                <td>978-0-399-59050-4</td>
+                                <td><span class="stock in-stock">In Stock</span></td>
+                            </tr>
+                            <tr>
+                                <td>BK006</td>
+                                <td>The Hobbit</td>
+                                <td>J.R.R. Tolkien</td>
+                                <td>Fantasy</td>
+                                <td class="price">$15.99</td>
+                                <td>978-0-547-92822-7</td>
+                                <td><span class="stock in-stock">In Stock</span></td>
+                            </tr>
+                            <tr>
+                                <td>BK007</td>
+                                <td>Atomic Habits</td>
+                                <td>James Clear</td>
+                                <td>Self-Help</td>
+                                <td class="price">$17.99</td>
+                                <td>978-0-7352-1129-2</td>
+                                <td><span class="stock in-stock">In Stock</span></td>
+                            </tr>
+                            <tr>
+                                <td>BK008</td>
+                                <td>The Alchemist</td>
+                                <td>Paulo Coelho</td>
+                                <td>Fiction</td>
+                                <td class="price">$14.99</td>
+                                <td>978-0-06-112241-5</td>
+                                <td><span class="stock low-stock">Low Stock</span></td>
+                            </tr>
+                            <tr>
+                                <td>BK009</td>
+                                <td>Thinking, Fast and Slow</td>
+                                <td>Daniel Kahneman</td>
+                                <td>Psychology</td>
+                                <td class="price">$19.99</td>
+                                <td>978-0-374-53355-7</td>
+                                <td><span class="stock in-stock">In Stock</span></td>
+                            </tr>
+                            <tr>
+                                <td>BK010</td>
+                                <td>Harry Potter (Set)</td>
+                                <td>J.K. Rowling</td>
+                                <td>Fantasy</td>
+                                <td class="price">$79.99</td>
+                                <td>978-0-545-16295-9</td>
+                                <td><span class="stock in-stock">In Stock</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- REGISTRATION PAGE -->
+            <div id="register" class="page">
+                <div class="form-container">
+                    <h2>✍️ New Member Registration</h2>
+                    <form onsubmit="return handleRegistration(event)">
+                        <div class="form-group">
+                            <label for="regName">Full Name</label>
+                            <input type="text" id="regName" required placeholder="Enter your full name">
+                        </div>
+                        <div class="form-group">
+                            <label for="regEmail">Email Address</label>
+                            <input type="email" id="regEmail" required placeholder="Enter your email">
+                        </div>
+                        <div class="form-group">
+                            <label for="regPassword">Password</label>
+                            <input type="password" id="regPassword" required placeholder="Create a password">
+                        </div>
+                        <div class="form-group">
+                            <label for="regConfirmPassword">Confirm Password</label>
+                            <input type="password" id="regConfirmPassword" required placeholder="Confirm your password">
+                        </div>
+                        <div class="form-group">
+                            <label for="regPhone">Phone Number</label>
+                            <input type="tel" id="regPhone" required placeholder="Enter your phone number">
+                        </div>
+                        <div class="form-group">
+                            <label for="regAddress">Address</label>
+                            <textarea id="regAddress" required placeholder="Enter your complete address"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="regCity">City</label>
+                            <input type="text" id="regCity" required placeholder="Enter your city">
+                        </div>
+                        <div class="form-group">
+                            <label for="regCountry">Country</label>
+                            <select id="regCountry" required>
+                                <option value="">Select Country</option>
+                                <option value="us">United States</option>
+                                <option value="uk">United Kingdom</option>
+                                <option value="ca">Canada</option>
+                                <option value="au">Australia</option>
+                                <option value="in">India</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" required> I agree to the terms and conditions
+                            </label>
+                        </div>
+                        <button type="submit" class="submit-btn">Register Now</button>
+                        <p style="text-align: center; margin-top: 20px; color: #7f8c8d;">
+                            Already have an account? <a href="#" onclick="showPage('login')" style="color: #3498db;">Login here</a>
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showPage(pageName) {
+            const pages = document.querySelectorAll('.page');
+            const buttons = document.querySelectorAll('.nav-buttons button');
+           
+            pages.forEach(page => page.classList.remove('active'));
+            buttons.forEach(btn => btn.classList.remove('active'));
+           
+            document.getElementById(pageName).classList.add('active');
+            document.getElementById(pageName + 'Btn').classList.add('active');
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            alert('Login functionality would be implemented with backend integration.');
+            return false;
+        }
+
+        function handleRegistration(event) {
+            event.preventDefault();
+            const password = document.getElementById('regPassword').value;
+            const confirmPassword = document.getElementById('regConfirmPassword').value;
+           
+            if (password !== confirmPassword) {
+                alert('Passwords do not match!');
+                return false;
+            }
+           
+            alert('Registration successful! You can now login.');
+            showPage('login');
+            return false;
+        }
+    </script>
+</body>
+</html>
+
